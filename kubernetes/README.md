@@ -1,17 +1,22 @@
 # Kubernetes Basics
-1. [Introduction](#1.-Introduction)
-    - 1.1. [Install Kubernetes](#1.1.-Install-Kubernetes)
-    - 1.2. [Introduction to Kubernetes](#1.2.-Introduction-to-Kubernetes)
-    - 1.3. [Pod](#1.3.-Pod)
-    - 1.4. [ReplicaSet](#1.4.-ReplicaSet)
-    - 1.5. [Deployment](#1.5.-Deployment)
-    - 1.6. [Service](#1.6.-Service)
-2. [Manage & Set Kubernetes Resources](#2.-Manage-&-Set-Kubernetes-Resources)   
-3. [Ingress](#3.-Ingress)
-4. [Persistent Volume & Persistent Volume Claim](#4.-Persistent-Volume-&-Persistent-Volume-Claim)
-5. [Service Account & RBAC](#5.-Service-Account-&-RBAC)
+1. [Introduction](#1-Introduction)
+    - 1.1. [Install Kubernetes](#11-Install-Kubernetes)
+    - 1.2. [Introduction to Kubernetes](#12-Introduction-to-Kubernetes)
+    - 1.3. [Pod](#13-Pod)
+    - 1.4. [ReplicaSet](#14-ReplicaSet)
+    - 1.5. [Deployment](#15-Deployment)
+    - 1.6. [Service](#16-Service)
+2. [Manage & Set Kubernetes Resources](#2-Manage-&-Set-Kubernetes-Resources)   
+3. [Ingress](#3-Ingress)
+4. [Persistent Volume & Persistent Volume Claim](#4-Persistent-Volume-&-Persistent-Volume-Claim)
+5. [Service Account & RBAC](#5-Service-Account-&-RBAC)
 
-Reference : "시작하세요! 도커/쿠버네티스 (용찬호 지음, 위키북스)"
+- Reference : "시작하세요! 도커/쿠버네티스 (용찬호 지음, 위키북스)"
+- Test Environments
+    - Cloud Platform : GKE
+    - Node type : n1-standard-2 (vCPUs: 2, 메모리: 7.50GB)
+    - Kubernetes version : 1.15.9
+    - kubectl version : 1.18.0
 
 
 ## 1. Introduction
@@ -34,6 +39,37 @@ Reference : "시작하세요! 도커/쿠버네티스 (용찬호 지음, 위키�
     4. 모든 서버에서 메모리 스왑을 비활성화했는가?
         * swapoff -a
         * cf. swap : 메모리 공간이 부족할 때 DRAM에서 디스크로 페이지를 내림
+
+- GKE 빠른 시작
+    - ref. https://cloud.google.com/kubernetes-engine/docs/quickstart?hl=ko
+    1. gcloud 설정
+        - `gcloud init`
+        - `gcloud config set project project-id`
+        - `gcloud config set compute/zone compute-zone`
+    2. GKE 클러스터 생성
+        - `gcloud container clusters create cluster-name --num-nodes=1`
+        - `gcloud container clusters get-credentials cluster-name`
+    2. 노드 풀 추가
+        - 생성 `gcloud container node-pools create pool-name --cluster cluster-name`
+            - GPU 사용 
+                ```  
+                gcloud container node-pools create [POOL_NAME] \   
+                --accelerator type=[GPU_TYPE],count=[AMOUNT] --zone [COMPUTE_ZONE] \   
+                --cluster [CLUSTER_NAME] [--num-nodes 3 --min-nodes 0 --max-nodes 5 \   
+                --enable-autoscaling]
+                ```
+        - 리스트 `gcloud container node-pools list --cluster cluster-name`
+        - 크기 조정 `gcloud container clusters resize cluster-name --node-pool pool-name \   
+            --num-nodes num-nodes`
+        - 삭제 `gcloud container node-pools delete pool-name --cluster cluster-name`
+    3. 배포 만들기
+        - `kubectl create deployment hello-server --image=gcr.io/google-samples/hello-app:1.0`    
+    4. 배포 노출
+        - `kubectl expose deployment hello-server --type LoadBalancer \   
+           --port 80 --target-port 8080`
+    5. 삭제
+        - 애플리케이션 서비스 삭제 `kubectl delete service hello-server`
+        - 클러스터 삭제 `gcloud container clusters delete cluster-name`
 
 ### 1.2. Introduction to Kubernetes
 - 모든 리소스는 오브젝트 형태로 관리
@@ -72,11 +108,6 @@ Reference : "시작하세요! 도커/쿠버네티스 (용찬호 지음, 위키�
         - [GKE - HTTP(S) Load Balancer와 Cloud Run for Anthos on Google Cloud 통합](https://cloud.google.com/solutions/integrating-https-load-balancing-with-istio-and-cloud-run-for-anthos-deployed-on-gke)
 
 ## 2. Manage & Set Kubernetes Resources
-- Test Environments
-    - Cloud Platform : GKE
-    - Node type : standard n2 (cpu v2)
-    - Kubernetes version : 1.15
-    - kubectl version : 1.18.0
 
 ## 3. Ingress
 - Ingress의 의미
@@ -129,9 +160,12 @@ Reference : "시작하세요! 도커/쿠버네티스 (용찬호 지음, 위키�
            - 클라이언트가 요청을 your-store.example에 전송하면 요청은 포트 60000에서 my-products라는 Kubernetes 서비스로 라우팅됩니다.
            - 클라이언트가 요청을 your-store.example/discounted에 전송하면 요청은 포트 80에서 my-discounted-products라는 Kubernetes 서비스로 라우팅됩니다.
            - 인그레스의 path 필드에서 지원되는 유일한 와일드 카드 문자는 * 문자입니다. * 문자는 슬래시(/) 다음에 와야 하며 패턴의 마지막 문자여야 합니다. eg. /* , /foo/* , /foo/bar/* 
+    - 구조 예시
+    ![Ingress](https://cloud.google.com/kubernetes-engine/images/ingress-http2.svg?hl=ko)
+        - ref. https://cloud.google.com/kubernetes-engine/images/ingress-http2.svg?hl=ko
+        - ref. https://tech.kakao.com/2018/12/24/kubernetes-deploy/   
 - Annotation
-    - Ingress의 추가적 기능
-    - YAML 파일의 주석 항목을 정의함으로써 다양한 옵션을 사용할 수 있다.
+    - Ingress의 추가적 기능. YAML 파일의 주석 항목을 정의함으로써 다양한 옵션을 사용할 수 있다.
     - eg.   
         ```
         kind: Service
@@ -158,5 +192,4 @@ Reference : "시작하세요! 도커/쿠버네티스 (용찬호 지음, 위키�
 ## 4. Persistent Volume & Persistent Volume Claim
 
 ## 5. Service Account & RBAC
-
 
