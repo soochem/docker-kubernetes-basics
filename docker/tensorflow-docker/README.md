@@ -26,7 +26,7 @@
 
 [https://cloud.google.com/sdk/gcloud/reference/beta/compute/ssh](https://cloud.google.com/sdk/gcloud/reference/beta/compute/ssh)
 
-`gcloud beta compute ssh --zone "my_zone" "instance_name" --project "project_id"`
+# `gcloud beta compute ssh --zone "my_zone" "instance_name" --project "project_id"`
 
 - 성공 시 : [user_name@instance_name ~]$
 

@@ -15,7 +15,7 @@
 - Test Environments
     - Cloud Platform : GKE
     - Node type : n1-standard-2 (vCPUs: 2, 메모리: 7.50GB)
-    - Kubernetes version : 1.15.9
+    - Kubernetes version : 1.14.10
     - kubectl version : 1.18.0
 
 
@@ -187,6 +187,118 @@
         - 예시 설명
             - [2] : 정의된 경로(path)로 들어온 요청을 rewrite-target에 설정된 경로로 전달
             - [3] : 해당 Ingress 규칙을 어떤 Ingress Controller에 적용할지 의미
+- ref
+  - [Kubernetes - Ingress](https://kubernetes.io/ko/docs/concepts/services-networking/ingress/)
+  - [Naver Cloud - NKS](https://docs.ncloud.com/ko/nks/nks-1-4.html)
+
+### 따라하기 예제   
+- [예제1] Ingress와 HTTP Load Balancing
+  - ref.
+      - [인그레스를 사용한 HTTP(S) 부하 분산 설정](https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer?hl=ko)
+      - [외부 HTTP(S) 부하 분산용 인그레스](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress-xlb?hl=ko)
+  
+  - 클러스터 만들기
+      1. CloudRun으로 만들기
+          ```
+           CLUSTER=cloudrun-gke-gclb-tutorial
+           ZONE=us-central1-f
+          
+           gcloud beta container clusters create $CLUSTER \
+               --addons HorizontalPodAutoscaling,HttpLoadBalancing,CloudRun \
+               --enable-ip-alias \
+               --enable-stackdriver-kubernetes \
+               --machine-type n1-standard-2 \
+               --zone $ZONE
+           ```  
+      2. UI로 만들기
+      3. CLI (gcloud)로 만들기
+  
+- 외부 Load Balancing Ingress 구성
+  - 1st App Deploy : `kubectl apply -f hello-world-deployment.yaml`
+       ```
+       apiVersion: apps/v1
+       kind: Deployment
+       metadata:
+         name: hello-world-deployment
+       spec:
+         selector:
+           matchLabels:
+             greeting: hello
+             department: world
+         replicas: 3
+         template:
+           metadata:
+             labels:
+               greeting: hello
+               department: world
+           spec:
+             containers:
+             - name: hello
+               image: "gcr.io/google-samples/hello-app:2.0"
+               env:
+               - name: "PORT"
+                 value: "50000"
+       ```
+  - 1st Deployment 노출하는 Service : `kubectl apply -f hello-world-service.yaml`
+       ```
+       apiVersion: v1
+       kind: Service
+       metadata:
+         name: hello-world
+       spec:
+         type: NodePort
+         selector:
+           greeting: hello
+           department: world
+         ports:
+         - protocol: TCP
+           port: 60000
+           targetPort: 50000
+       ```
+  - 2nd App Deploy : 같은 방식으로 8080번 포트를 사용하는 서비스를 통해 요청을 받으면, 80번 포트 구성원 포드 중 하나로 전달되도록 설계
+  - Ingress 생성 : `kubectl apply -f my-ingress.yaml`
+       ```
+       apiVersion: networking.k8s.io/v1beta1
+       kind: Ingress
+       metadata:
+         name: my-ingress
+       spec:
+         rules:
+         - http:
+             paths:
+             - path: /*
+               backend:
+                 serviceName: hello-world
+                 servicePort: 60000
+             - path: /kube
+               backend:
+                 serviceName: hello-kubernetes
+                 servicePort: 80
+       ```
+      - Load Balancer 구성할 때까지 기다리면,
+           `kubectl get ingress my-ingress --output yaml`
+           ```
+           output:
+               status:
+                 loadBalancer:
+                   ingress:
+                   - ip: xxx.x.xx.xx
+           ```
+          
+      -  curl [LOAD_BALANCER_IP]/
+          ```
+           output:
+               Hello, world!
+               Version: 2.0.0
+               Hostname: ...
+           ```
+      - curl [LOAD_BALANCER_IP]/
+          ```
+           output:
+              Hello Kubernetes!
+           ```
+- [예제2] Load Balancing과 Cloud Run
+  - ref. [HTTP(S) 부하 분산과 Cloud Run for Anthos on Google Cloud 통합](https://cloud.google.com/solutions/integrating-https-load-balancing-with-istio-and-cloud-run-for-anthos-deployed-on-gke)
 
 
 ## 4. Persistent Volume & Persistent Volume Claim
