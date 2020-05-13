@@ -17,6 +17,7 @@
     - If you want to get up running Knative quickly or you do not need service mesh,
         we recommend installing Istio without service mesh(sidecar injection)
     - **For Istio use versions 1.1.6 and 1.3.1 which have been tested, and for Kubernetes use 1.15+**
+        (ref. [Developer Guide - Install KNative](https://github.com/kubeflow/kfserving/blob/master/docs/DEVELOPER_GUIDE.md#install-knative-on-a-kubernetes-cluster))
 - Istio 다운로드 및 CRD 설치
    ```
    # Download and unpack Istio
@@ -81,7 +82,7 @@
        `kubectl apply --filename https://github.com/knative/net-istio/releases/download/v0.14.0/release.yaml`
        `kubectl --namespace istio-system get service istio-ingressgateway`
     - DNS 설정
-      - Real DNS : curl 사용하고, Magic DNS 사용 불가
+       - Real DNS : curl 사용하고, Magic DNS 사용 불가할 때
        -- `kubectl get ksvc`
        --`curl -H "Host: helloworld-go.default.example.com" http://192.168.39.228:32198`
        --   - output : `Hello Go Sample v1!`
