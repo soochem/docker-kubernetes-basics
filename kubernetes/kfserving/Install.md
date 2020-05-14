@@ -17,10 +17,11 @@
     - If you want to get up running Knative quickly or you do not need service mesh,
         we recommend installing Istio without service mesh(sidecar injection)
     - **For Istio use versions 1.1.6 and 1.3.1 which have been tested, and for Kubernetes use 1.15+**
+        (ref. [Developer Guide - Install KNative](https://github.com/kubeflow/kfserving/blob/master/docs/DEVELOPER_GUIDE.md#install-knative-on-a-kubernetes-cluster))
 - Istio 다운로드 및 CRD 설치
    ```
    # Download and unpack Istio
-   export ISTIO_VERSION=1.4.6
+   export ISTIO_VERSION=1.3.1
    curl -L https://git.io/getLatestIstio | sh -
    cd istio-${ISTIO_VERSION}
   
@@ -81,7 +82,7 @@
        `kubectl apply --filename https://github.com/knative/net-istio/releases/download/v0.14.0/release.yaml`
        `kubectl --namespace istio-system get service istio-ingressgateway`
     - DNS 설정
-      - Real DNS : curl 사용하고, Magic DNS 사용 불가
+       - Real DNS : curl 사용하고, Magic DNS 사용 불가할 때
        -- `kubectl get ksvc`
        --`curl -H "Host: helloworld-go.default.example.com" http://192.168.39.228:32198`
        --   - output : `Hello Go Sample v1!`
@@ -202,15 +203,18 @@
     $ kubectl get inferenceservices sklearn-iris
     NAME           URL                                                              READY   DEFAULT TRAFFIC   CANARY TRAFFIC   AGE
     sklearn-iris   http://sklearn-iris.default.example.com/v1/models/sklearn-iris   True    100                                109s
+    
     # Curl the InferenceService
     $ kubectl port-forward --namespace istio-system $(kubectl get pod \
             --namespace istio-system \
             --selector="app=istio-ingressgateway" \
             --output jsonpath='{.items[0].metadata.name}') 8080:80
     $ curl -v -H "Host: sklearn-iris.default.example.com" http://localhost:8080/v1/models/sklearn-iris:predict -d @./docs/samples/sklearn/iris-input.json
+    
     # To use External IP (NodePort OR LoadBalancer)
     $ curl -v -H "Host: sklearn-iris.default.example.com" http://{external_ip}:8080/v1/models/sklearn-iris:predict -d @./docs/samples/sklearn/iris-input.json  
     ```
+
 - Debug (LoadBalancer 사용)
     - Resource list
         ```
@@ -258,9 +262,8 @@
             {"predictions": [1, 1]}(base)
         ```
 ### Dummy Codes
-1. custom knative ingressgateway
+1. custom knative ingressgateway (ref. [Setting up custom ingress gateway](https://knative.dev/docs/serving/setting-up-custom-ingress-gateway/))
     ```
-      https://knative.dev/docs/serving/setting-up-custom-ingress-gateway/
       default : istio-ingressgateway
       custom knative-ingressgateway
         kubectl edit gateway knative-ingress-gateway -n knative-serving
