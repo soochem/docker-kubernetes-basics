@@ -1,3 +1,5 @@
 venv/
 .idea/
 kubernetes/kfserving/README.md
+kubernetes/kfserving/predictor.md
+kubernetes/kfserving/transformer.md
