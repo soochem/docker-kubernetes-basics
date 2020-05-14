@@ -1,4 +1,4 @@
-#Kubeflow
+# Kubeflow
 
 ## Prerequsites
 - 배경지식
@@ -42,3 +42,4 @@
            name: kubeflow-self-signing-issuer
          secretName: istio-ingressgateway-certs
        ```
+- [Kfserving with Dex](https://github.com/kubeflow/kfserving/tree/master/docs/samples/istio-dex)
