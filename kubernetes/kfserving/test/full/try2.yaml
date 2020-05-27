@@ -1,0 +1,28 @@
+# batch_size test
+
+apiVersion: "serving.kubeflow.org/v1alpha2"
+kind: "InferenceService"
+metadata:
+  controller-tools.k8s.io: "1.0"
+  name: mobnet-full
+spec:
+  default:
+    predictor:
+      tensorflow:
+        storageUri: "gs://suminseo-datasets/KFServing/model-1.15.2/sm-model"
+        runtimeVersion: "1.14.0"
+    transformer:
+      #serviceAccountName: s3-private-sa
+      custom:
+        #imagePullSecrets:
+        #- name: docker-secret-key
+        container:
+          image: docker.io/pydemia/mobilenet_transformer:tf1.15.2-0.2.0
+          name: kfserving-container
+    explainer:
+      alibi:
+        type: AnchorImages
+        storageUri: "gs://suminseo-datasets/KFServing/explainer-v0.3.2"
+        #runtimeVersion: "v0.3.0"
+        config:
+          batch_size: "1"

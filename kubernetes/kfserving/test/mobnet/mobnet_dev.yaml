@@ -1,0 +1,30 @@
+apiVersion: "serving.kubeflow.org/v1alpha2"
+kind: "InferenceService"
+metadata:
+  name: "mobnet"
+spec:
+  default:
+    predictor:
+      serviceAccountName: s3-private-sa
+      tensorflow:
+        storageUri: "s3://yjkim-models/kfserving/mobilenet/predictor/mobilenet_saved_model"
+        #resources:
+        #  requests:
+        #    cpu: 0.1
+        #    memory: 2Gi
+        #  limits:
+        #    memory: 2Gi
+    explainer:
+      serviceAccountName: s3-private-sa
+      alibi:
+        type: AnchorImages
+        storageUri: "s3://yjkim-models/kfserving/mobilenet/explainer-sms"
+        runtimeVersion: "v0.3.2-predict_fn"
+        config:
+          batch_size: "1"
+          #resources:
+          #  requests:
+          #    cpu: 0.2
+          #    memory: 2Gi
+          #  limits:
+          #    memory: 2Gi

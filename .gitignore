@@ -3,3 +3,4 @@ venv/
 kubernetes/kfserving/README.md
 kubernetes/kfserving/predictor.md
 kubernetes/kfserving/transformer.md
+kubernetes/kfserving/test/mobnet/my_work.md
