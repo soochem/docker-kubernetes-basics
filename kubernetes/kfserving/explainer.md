@@ -1,7 +1,7 @@
 # KFServing Explainer
 
 ## Introduction to Explainer
-1. [Parameters](./parameters.md)
+1. [Parameters](parameters.md)
 2. [Tests](./test/test.md)
 
 ## Install
