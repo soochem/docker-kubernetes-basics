@@ -1,5 +1,9 @@
 # KFServing Explainer
 
+## Introduction to Explainer
+1. [Parameters](./parameters.md)
+2. [Tests](./test/test.md)
+
 ## Install
 - Prerequisite
   - Knative
@@ -182,8 +186,8 @@
       - Custom MobileNet   
         ex.   
         ```
-        # 예제
         export INFERENCE_NS="default"
+        # 예제
         #export MODEL_NAME="imagenet"
         #export INPUT_PATH="@./input_image.json"
         # Custom
@@ -198,6 +202,7 @@
         export SERVICE_HOSTNAME=$(kubectl -n $INFERENCE_NS get inferenceservice $MODEL_NAME -o jsonpath='{.status.url}' | cut -d "/" -f 3)
         echo "$CLUSTER_IP, $SERVICE_HOSTNAME"
         
+        curl -v -H "Host: ${SERVICE_HOSTNAME}" http://${CLUSTER_IP}/v1/models/${MODEL_NAME}:predict -d ${INPUT_PATH} > ./output_predict.json        
         curl -v -H "Host: ${SERVICE_HOSTNAME}" http://${CLUSTER_IP}/v1/models/${MODEL_NAME}:explain -d ${INPUT_PATH} > ./output_explain.json
         ```
         
