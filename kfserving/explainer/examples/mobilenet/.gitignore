@@ -1,0 +1,7 @@
+data/
+log/
+ref/
+secrets/
+my_work.md
+predict.sh
+explain.sh

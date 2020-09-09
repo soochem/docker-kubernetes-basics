@@ -261,7 +261,8 @@
             * Connection #0 to host {external_ip} left intact
             {"predictions": [1, 1]}(base)
         ```
-### Dummy Codes
+
+### Additional Materials
 1. custom knative ingressgateway (ref. [Setting up custom ingress gateway](https://knative.dev/docs/serving/setting-up-custom-ingress-gateway/))
     ```
       default : istio-ingressgateway

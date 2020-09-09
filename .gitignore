@@ -1,5 +1,16 @@
 venv/
 .idea/
-kubernetes/kfserving/README.md
-kubernetes/kfserving/predictor.md
-kubernetes/kfserving/transformer.md
+.vscode/
+*.code-workspace
+# working dir
+kfserving/README.md
+kfserving/predictor.md
+kfserving/transformer.md
+kfserving/explainer/examples/mobilenet/my_work.md
+kfserving/explainer/test/
+kfserving/explainer/*/data/
+kfserving/explainer/test/mobnet/my_work.md
+kfserving/explainer/test/*/log/
+
+# log
+*.log
