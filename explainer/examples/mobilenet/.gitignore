@@ -1,7 +1,9 @@
 data/
+result/
 log/
 ref/
 secrets/
 my_work.md
 predict.sh
 explain.sh
+mobnet-gs.yaml

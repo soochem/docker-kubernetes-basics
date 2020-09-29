@@ -6,11 +6,12 @@ venv/
 kfserving/README.md
 kfserving/predictor.md
 kfserving/transformer.md
-kfserving/explainer/examples/mobilenet/my_work.md
-kfserving/explainer/test/
-kfserving/explainer/*/data/
-kfserving/explainer/test/mobnet/my_work.md
-kfserving/explainer/test/*/log/
+explainer/data/
+explainer/test/
+explainer/examples/*/.ipynb_checkpoints/
+explainer/examples/*/result/
+explainer/examples/*/data/
+explainer/examples/*/log/
 
 # log
 *.log

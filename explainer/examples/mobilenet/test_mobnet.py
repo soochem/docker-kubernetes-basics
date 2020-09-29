@@ -97,4 +97,3 @@ def explain(ns, cluster_ip):
 # to test
 cluster_ip = os.environ.get("CLUSTER_IP")
 predict("default", cluster_ip)
-predict("default", cluster_ip)

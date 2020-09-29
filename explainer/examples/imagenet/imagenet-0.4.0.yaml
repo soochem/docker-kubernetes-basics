@@ -18,6 +18,7 @@ spec:
         type: AnchorImages
         storageUri: "gs://seldon-models/tfserving/imagenet/alibi/0.4.0"
         config:
+          threshold: "0.85"
           batch_size: "25"
           stop_on_first: "True"
         resources:

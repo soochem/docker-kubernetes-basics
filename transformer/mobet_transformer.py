@@ -1,4 +1,3 @@
-
 import kfserving
 from typing import List, Dict
 from PIL import Image
