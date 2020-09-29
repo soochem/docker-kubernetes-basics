@@ -12,7 +12,7 @@
     ```
     export INFERENCE_NS="default"
     export MODEL_NAME="moviesentiment"
-    export INPUT_PATH="@./input_data.json"
+    export INPUT_PATH="@./data/input_data.json"
     
     export CLUSTER_IP=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
     export SERVICE_HOSTNAME=$(kubectl -n $INFERENCE_NS get inferenceservice $MODEL_NAME -o jsonpath='{.status.url}' | cut -d "/" -f 3)
